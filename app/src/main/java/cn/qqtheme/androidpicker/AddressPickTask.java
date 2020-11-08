@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
-import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -77,7 +80,13 @@ public class AddressPickTask extends AsyncTask<String, Void, ArrayList<Province>
             Activity activity = activityReference.get();
             if (activity != null) {
                 String json = ConvertUtils.toString(activity.getAssets().open("city.json"));
-                data.addAll(JSON.parseArray(json, Province.class));
+//                data.addAll(JSON.parseArray(json, Province.class));
+                JsonParser jsonParser = new JsonParser();
+                JsonArray jsonArray = jsonParser.parse(json).getAsJsonArray();
+                Gson gson = new Gson();
+                for (JsonElement prov : jsonArray) {
+                    data.add(gson.fromJson(prov, Province.class));
+                }
             }
         } catch (java.io.IOException e) {
             e.printStackTrace();

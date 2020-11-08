@@ -10,7 +10,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.alibaba.fastjson.JSON;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -464,7 +468,13 @@ public class MainActivity extends BaseActivity {
         try {
             ArrayList<Province> data = new ArrayList<>();
             String json = ConvertUtils.toString(getAssets().open("city2.json"));
-            data.addAll(JSON.parseArray(json, Province.class));
+//            data.addAll(JSON.parseArray(json, Province.class));
+            JsonParser jsonParser = new JsonParser();
+            JsonArray jsonArray = jsonParser.parse(json).getAsJsonArray();
+            Gson gson = new Gson();
+            for (JsonElement prov : jsonArray) {
+                data.add(gson.fromJson(prov, Province.class));
+            }
             AddressPicker picker = new AddressPicker(this, data);
             picker.setShadowVisible(true);
             picker.setTextSizeAutoFit(false);
